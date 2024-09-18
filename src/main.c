@@ -159,7 +159,7 @@ int main(int argc, char **argv)
         if (chip8.registers.delay_timer > 0)
         {
             //printf("delay %d\n",chip8.registers.delay_timer);
-            //chip8_sleep(&chip8, 1);
+            chip8_sleep(&chip8, 10);
             chip8.registers.delay_timer -=1;
         }
 

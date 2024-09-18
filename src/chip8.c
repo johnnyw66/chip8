@@ -77,14 +77,11 @@ void chip8_init(struct chip8 *chip8)
     SDL_PauseAudioDevice(dev, 0); // Start audio playback
     play_beep(dev, 100, 440);
 
-    //SDL_Delay(3000); // Play for 1 second
-
-
 }
 
 void chip8_sleep(struct chip8 *chip8, int del)
 {
-    SDL_Delay(del * 1000);
+    SDL_Delay(del);
 }
 
 void chip8_deinit(struct chip8 *chip8)
