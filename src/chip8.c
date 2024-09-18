@@ -6,7 +6,6 @@
 #include <time.h>
 #include "SDL2/SDL.h"
 
-
 const char chip8_default_character_set[] = {
     0xf0, 0x90, 0x90, 0x90, 0xf0,
     0x20, 0x60, 0x20, 0x20, 0x70,
@@ -26,13 +25,84 @@ const char chip8_default_character_set[] = {
     0xf0, 0x80, 0xf0, 0x80, 0x80
 };
 
+SDL_AudioDeviceID dev ;
+
+const int SAMPLE_RATE = 44100;
+const int AMPLITUDE = 28000;
+const int FREQUENCY = 440;
+
+
+void generate_sine_wave(int16_t* buffer, int length, int frequency) {
+    static double phase = 0.0;
+
+    for (int i = 0; i < length; i++, phase += 2.0 * M_PI * frequency / SAMPLE_RATE) {
+        buffer[i] = (int16_t) (AMPLITUDE * sin(phase));
+        if (phase >= 2.0 * M_PI) {
+            phase -= 2.0 * M_PI; // Reset the phase to avoid overflow
+        }
+    }
+}
+
+
+void play_beep(SDL_AudioDeviceID dev, int duration_ms, int frequency) {
+    int length = (SAMPLE_RATE * duration_ms) / 1000; // Number of samples for the beep duration
+    int16_t* buffer = (int16_t*) SDL_malloc(length * sizeof(int16_t));
+    if (buffer == NULL) {
+        SDL_Log("Failed to allocate buffer");
+        return;
+    }
+
+    generate_sine_wave(buffer, length, frequency);
+
+    // Queue the audio data for playback
+    SDL_QueueAudio(dev, buffer, length * sizeof(int16_t));
+    SDL_free(buffer); // Free the buffer after queuing the audio
+}
+
+
 void chip8_init(struct chip8 *chip8)
 {
 	memset(chip8, 0, sizeof(struct chip8));
     memcpy(&chip8->memory.memory, chip8_default_character_set, sizeof(chip8_default_character_set));
+    SDL_AudioSpec want, have;
+    //SDL_AudioDeviceID dev;
+
+    SDL_memset(&want, 0, sizeof(want)); // Clear the memory for safety
+    want.freq = SAMPLE_RATE;
+    want.format = AUDIO_S16SYS;
+    want.channels = 1; // Mono
+    want.samples = 4096;
+    dev = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
+    assert(dev);
+    SDL_PauseAudioDevice(dev, 0); // Start audio playback
+    play_beep(dev, 100, 440);
+
+    //SDL_Delay(3000); // Play for 1 second
+
 
 }
 
+void chip8_sleep(struct chip8 *chip8, int del)
+{
+    SDL_Delay(del * 1000);
+}
+
+void chip8_deinit(struct chip8 *chip8)
+{
+    if (dev)
+    {
+        SDL_CloseAudioDevice(dev);
+    }
+    // @TODO
+}
+
+void chip8_beep(struct chip8 *chip8, int duration_ms, int freq)
+{
+    if (dev)
+    {
+        play_beep(dev, duration_ms, freq);
+    }
+}
 
 void chip8_load(struct chip8* chip8, const char* buf, size_t size)
 {

@@ -47,6 +47,7 @@ void test()
 }
 */
 
+
 int main(int argc, char **argv)
 {
 
@@ -77,6 +78,8 @@ int main(int argc, char **argv)
         printf("Failed to read from file");
         return -1;
     }
+
+    SDL_Init(SDL_INIT_EVERYTHING);
     
     struct chip8 chip8;
     chip8_init(&chip8);
@@ -84,7 +87,9 @@ int main(int argc, char **argv)
     chip8_keyboard_set_map(&chip8.keyboard, keyboard_bindings);
    
 
-    SDL_Init(SDL_INIT_EVERYTHING);
+
+
+
     SDL_Window *window = SDL_CreateWindow(
         EMULATOR_WINDOW_TITLE,
         SDL_WINDOWPOS_CENTERED,
@@ -153,13 +158,14 @@ int main(int argc, char **argv)
         SDL_RenderPresent(renderer);
         if (chip8.registers.delay_timer > 0)
         {
-            //Sleep(1);
+            //printf("delay %d\n",chip8.registers.delay_timer);
+            //chip8_sleep(&chip8, 1);
             chip8.registers.delay_timer -=1;
         }
 
         if (chip8.registers.sound_timer > 0)
         {
-            //Beep(15000, 10 * chip8.registers.sound_timer);
+            chip8_beep(&chip8,100, 440);
             chip8.registers.sound_timer = 0;
         }
         
