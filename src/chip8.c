@@ -63,7 +63,7 @@ void play_beep(SDL_AudioDeviceID dev, int duration_ms, int frequency) {
 void chip8_init(struct chip8 *chip8)
 {
 	memset(chip8, 0, sizeof(struct chip8));
-    memcpy(&chip8->memory.memory, chip8_default_character_set, sizeof(chip8_default_character_set));
+    memcpy(&chip8->memory.memory[CHIP8_CHARACTER_SET_LOAD_ADDRESS], chip8_default_character_set, sizeof(chip8_default_character_set));
     SDL_AudioSpec want, have;
     //SDL_AudioDeviceID dev;
 
