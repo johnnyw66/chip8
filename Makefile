@@ -18,6 +18,7 @@ LDFLAGS = -rpath $(FRAMEWORK_DIR) -framework SDL2
 
 SRC = $(SRC_DIR)/main.c  $(SRC_DIR)/chip8.c $(SRC_DIR)/chip8memory.c  $(SRC_DIR)/chip8stack.c $(SRC_DIR)/chip8keyboard.c $(SRC_DIR)/chip8screen.c
 CODE = $(CODE_DIR)/pong.rom
+TEST = $(CODE_DIR)/draw.rom
 
 OUT = $(BIN_DIR)/main
 SYMBOLS=$(BIN_DIR)/main.dSYM
@@ -39,6 +40,8 @@ run: $(OUT)
 	./$(OUT) $(CODE)
 
 
+test: $(OUT)
+	./$(OUT) $(TEST)
 
 
 
