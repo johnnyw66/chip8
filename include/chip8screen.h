@@ -2,11 +2,14 @@
 #define _CHIP8SCREEN_H
 
 #include <stdbool.h>
+
 #include "config.h"
+
+typedef unsigned char byte;
 
 struct chip8_screen
 {
-    bool pixels[CHIP8_HEIGHT][CHIP8_WIDTH];
+    byte pixels[CHIP8_HEIGHT * (CHIP8_WIDTH>>3)];
 };
 
 void chip8_screen_clear(struct chip8_screen* screen);
