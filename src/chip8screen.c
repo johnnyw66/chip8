@@ -8,13 +8,13 @@ static void chip8_screen_check_bounds(int x, int y)
     assert(x >= 0 && x < CHIP8_WIDTH && y >= 0 && y < CHIP8_HEIGHT);
 }
 
-byte calc_bitmask(int x)
+static inline byte calc_bitmask(int x)
 {
     byte bitmask = 1<<(7 - (x & 7));
     return bitmask;
 }
 
-int pixel_offset(int x, int y)
+static inline int pixel_offset(int x, int y)
 {
     int offset = (y*(CHIP8_WIDTH>>3)) + (x>>3) ;
     return offset;
